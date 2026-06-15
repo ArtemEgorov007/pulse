@@ -139,10 +139,15 @@ export default {
 .featured-post {
   border-top: 3px solid var(--color-ink);
   border-bottom: 1px solid var(--color-rule);
-  padding: var(--spacing-xl) 0 var(--spacing-lg);
+  background: var(--color-surface);
+  padding: var(--spacing-xl) var(--spacing-2xl);
   margin-bottom: var(--spacing-xl);
   cursor: pointer;
-  transition: border-color var(--transition-fast);
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.featured-post:hover {
+  box-shadow: var(--shadow-sm);
 }
 
 .featured-post:focus-visible {
@@ -262,6 +267,10 @@ export default {
   .post-list__column {
     border-left: none;
     padding-left: 0;
+  }
+
+  .featured-post {
+    padding: var(--spacing-lg);
   }
 
   .featured-post__title {
