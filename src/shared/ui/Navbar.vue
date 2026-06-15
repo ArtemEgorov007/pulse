@@ -1,55 +1,80 @@
 <template>
-  <nav class="navbar">
-    <div class="navbar__progress-overlay" :style="{ width: scrollProgress + '%' }"></div>
+  <header class="masthead">
+    <!-- Scroll progress bar -->
+    <div class="masthead__progress" :style="{ width: scrollProgress + '%' }"></div>
 
-    <div class="navbar__content">
-      <div class="navbar__brand">
-        <router-link to="/" class="navbar__logo">
-          <span class="navbar__logo-text">Pulse</span>
-        </router-link>
+    <!-- Top strip: dateline + nav + theme -->
+    <div class="masthead__top">
+      <div class="masthead__top-inner">
+        <span class="masthead__dateline">{{ formattedDate }}</span>
+
+        <ul class="masthead__nav-list">
+          <li>
+            <router-link to="/posts" class="masthead__nav-link" aria-label="Home">
+              <Icon icon="ph:house-simple" width="18" height="18" />
+              <span class="masthead__nav-label">Home</span>
+            </router-link>
+          </li>
+          <li>
+            <router-link to="/favorites" class="masthead__nav-link" aria-label="Favorites">
+              <Icon icon="ph:heart" width="18" height="18" />
+              <span class="masthead__nav-label">Saved</span>
+            </router-link>
+          </li>
+          <li>
+            <router-link to="/about" class="masthead__nav-link" aria-label="About">
+              <Icon icon="ph:info" width="18" height="18" />
+              <span class="masthead__nav-label">About</span>
+            </router-link>
+          </li>
+          <li class="masthead__nav-divider" aria-hidden="true"></li>
+          <li>
+            <theme-switcher />
+          </li>
+        </ul>
       </div>
-
-      <ul class="navbar__list">
-        <li>
-          <router-link to="/posts" class="navbar__link">
-            <Icon icon="mdi:home" width="20" height="20"/>
-          </router-link>
-        </li>
-        <li>
-          <router-link to="/favorites" class="navbar__link">
-            <Icon icon="mdi:heart" width="20" height="20"/>
-          </router-link>
-        </li>
-        <li>
-          <router-link to="/about" class="navbar__link">
-            <Icon icon="mdi:information" width="20" height="20"/>
-          </router-link>
-        </li>
-        <li>
-          <theme-switcher />
-        </li>
-      </ul>
     </div>
-  </nav>
+
+    <!-- Rule -->
+    <div class="masthead__rule" aria-hidden="true"></div>
+
+    <!-- Masthead logo -->
+    <div class="masthead__brand">
+      <router-link to="/" class="masthead__logo" aria-label="Pulse — Home">
+        <span class="masthead__logo-text">Pulse</span>
+      </router-link>
+      <p class="masthead__tagline">Technology &amp; Innovation</p>
+    </div>
+
+    <!-- Bottom rule -->
+    <div class="masthead__rule masthead__rule--thick" aria-hidden="true"></div>
+  </header>
 </template>
 
 <script>
-import {Icon} from '@iconify/vue';
+import { Icon } from '@iconify/vue';
 import ThemeSwitcher from './ThemeSwitcher.vue';
 
 export default {
   name: 'Navbar',
-  components: {
-    Icon,
-    ThemeSwitcher
-  },
+  components: { Icon, ThemeSwitcher },
   data() {
     return {
       scrollProgress: 0
+    };
+  },
+  computed: {
+    formattedDate() {
+      return new Date().toLocaleDateString('en-US', {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      });
     }
   },
   mounted() {
-    window.addEventListener('scroll', this.handleScroll);
+    window.addEventListener('scroll', this.handleScroll, { passive: true });
     this.handleScroll();
   },
   beforeUnmount() {
@@ -59,161 +84,186 @@ export default {
     handleScroll() {
       const scrollTop = window.scrollY;
       const documentHeight = document.documentElement.scrollHeight - window.innerHeight;
-      const progress = (documentHeight > 0) ? (scrollTop / documentHeight) * 100 : 0;
-      this.scrollProgress = progress;
+      this.scrollProgress = documentHeight > 0 ? (scrollTop / documentHeight) * 100 : 0;
     }
   }
-}
+};
 </script>
 
 <style scoped>
-.navbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: var(--spacing-md) var(--spacing-xl);
-  background: linear-gradient(135deg, var(--color-primary-700), var(--color-primary-900));
-  box-shadow: var(--shadow-md);
+.masthead {
   position: sticky;
   top: 0;
   z-index: 100;
-  overflow: hidden;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  background: var(--color-paper);
+  border-bottom: 2px solid var(--color-ink);
+  transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 
-.navbar__progress-overlay {
+/* Scroll progress */
+.masthead__progress {
   position: absolute;
   top: 0;
   left: 0;
-  height: 100%;
-  background: linear-gradient(135deg, var(--color-primary-500), var(--color-primary-600));
-  transition: width 0.1s ease-out;
- z-index: -1;
+  height: 3px;
+  background: var(--color-accent);
+  transition: width 0.1s linear;
+  z-index: 10;
 }
 
-.navbar__content {
+/* Top strip */
+.masthead__top {
+  padding: 0 var(--spacing-xl);
+}
+
+.masthead__top-inner {
+  max-width: var(--container-max);
+  margin: 0 auto;
   display: flex;
+  align-items: center;
   justify-content: space-between;
-  align-items: center;
-  width: 100%;
-  position: relative;
-  z-index: 1;
+  padding: 0.5rem 0;
 }
 
-.navbar__brand {
-  display: flex;
-  align-items:center;
-}
-
-.navbar__logo {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-sm);
-  text-decoration: none;
-  color: white;
-  font-weight: var(--font-weight-bold);
-  font-size: var(--font-size-xl);
-  transition: opacity var(--transition-fast);
-}
-
-.navbar__logo:hover {
-  opacity: 0.9;
-}
-
-.navbar__list {
-  display: flex;
-  list-style: none;
-  gap: var(--spacing-md);
-}
-
-.navbar__link {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-xs);
-  text-decoration: none;
-  color: var(--color-primary-100);
+.masthead__dateline {
+  font-family: var(--font-sans);
+  font-size: var(--font-size-xs);
   font-weight: var(--font-weight-medium);
-  padding: var(--spacing-sm) var(--spacing-md);
-  border-radius: var(--border-radius-full);
-  transition: all var(--transition-fast);
-  position: relative;
-  overflow: hidden;
+  letter-spacing: var(--letter-spacing-caps);
+  text-transform: uppercase;
+  color: var(--color-ink-muted);
+  transition: color 0.35s ease;
 }
 
-.navbar__link::before {
+/* Nav */
+.masthead__nav-list {
+  display: flex;
+  align-items: center;
+  gap: 0.125rem;
+}
+
+.masthead__nav-link {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.375rem 0.625rem;
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  letter-spacing: var(--letter-spacing-caps);
+  text-transform: uppercase;
+  color: var(--color-ink-muted);
+  text-decoration: none;
+  border-radius: var(--border-radius-sm);
+  transition: color var(--transition-fast);
+  position: relative;
+}
+
+.masthead__nav-link::after {
   content: '';
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(255, 255,255, 0.1);
-  opacity: 0;
-  transition: opacity var(--transition-fast);
-  z-index: -1;
+  bottom: 0;
+  left: 0.625rem;
+  right: 0.625rem;
+  height: 2px;
+  background: var(--color-accent);
+  transform: scaleX(0);
+  transition: transform var(--transition-fast);
+  transform-origin: center;
 }
 
-.navbar__link:hover {
-  background-color: rgba(255, 255, 255, 0.1);
- color: white;
-  transform: translateY(-2px);
+.masthead__nav-link:hover {
+  color: var(--color-ink);
 }
 
-.navbar__link:hover::before {
-  opacity: 1;
+.masthead__nav-link.router-link-exact-active {
+  color: var(--color-ink);
 }
 
-.navbar__link.router-link-exact-active {
-  background-color: rgba(255, 255, 255, 0.2);
-  color:white;
+.masthead__nav-link.router-link-exact-active::after {
+  transform: scaleX(1);
 }
 
-.dark-theme .navbar {
-  background: linear-gradient(135deg, var(--color-neutral-50), var(--color-neutral-100));
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+.masthead__nav-label {
+  display: inline;
 }
 
-.dark-theme .navbar__progress-overlay {
-  background: linear-gradient(135deg, var(--color-neutral-100), var(--color-neutral-200));
+.masthead__nav-divider {
+  width: 1px;
+  height: 1rem;
+  background: var(--color-rule);
+  margin: 0 0.25rem;
 }
 
-.dark-theme .navbar__link {
-  color: var(--color-primary-200);
+/* Rule */
+.masthead__rule {
+  border: none;
+  border-top: 1px solid var(--color-rule);
+  margin: 0 var(--spacing-xl);
+  transition: border-color 0.35s ease;
 }
 
-.dark-theme .navbar__link::before {
-  background: rgba(255, 255, 255, 0.1);
+.masthead__rule--thick {
+  border-top-width: 3px;
+  border-color: var(--color-ink);
+  margin: 0;
 }
 
-.dark-theme .navbar__link:hover {
-  background-color: rgba(255, 255, 255, 0.15);
- color: white;
+/* Brand */
+.masthead__brand {
+  text-align: center;
+  padding: 1rem var(--spacing-xl) 0.875rem;
 }
 
-.dark-theme .navbar__link.router-link-exact-active {
-  background-color: rgba(255, 255, 255, 0.25);
-  color: white;
+.masthead__logo {
+  text-decoration: none;
+  display: inline-block;
 }
 
-@media (max-width: 768px) {
-  .navbar {
-padding: var(--spacing-sm) var(--spacing-md);
-  }
+.masthead__logo-text {
+  font-family: var(--font-serif);
+  font-size: clamp(2rem, 5vw, 3.25rem);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: -0.03em;
+  color: var(--color-ink);
+  line-height: 1;
+  transition: color var(--transition-fast);
+  display: block;
+}
 
-  .navbar__logo-text {
-    font-size: var(--font-size-lg);
-  }
+.masthead__logo:hover .masthead__logo-text {
+  color: var(--color-accent);
+}
 
-  .navbar__list {
-    gap: var(--spacing-xs);
-  }
+.masthead__tagline {
+  font-family: var(--font-sans);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-regular);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-ink-muted);
+  margin-top: 0.25rem;
+  transition: color 0.35s ease;
+}
 
-  .navbar__link span {
+@media (max-width: 640px) {
+  .masthead__nav-label {
     display: none;
   }
 
- .navbar__link {
-    padding: var(--spacing-sm);
+  .masthead__dateline {
+    display: none;
+  }
+
+  .masthead__top {
+    padding: 0 var(--spacing-md);
+  }
+
+  .masthead__rule {
+    margin: 0 var(--spacing-md);
+  }
+
+  .masthead__brand {
+    padding: 0.75rem var(--spacing-md) 0.75rem;
   }
 }
 </style>

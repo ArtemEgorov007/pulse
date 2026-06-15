@@ -1,79 +1,91 @@
 <template>
-  <div class="post-card"tabindex="0" role="article" aria-label="News article">
-    <div class="post-card__header">
-      <div
-          class="post-card__favorite"
-          :class="{ 'post-card__favorite--active': isFavorite }"
-          @click="toggleFavorite"
-          :title="isFavorite? 'Remove from favorites' : 'Add to favorites'"
-          :aria-label="isFavorite ? 'Remove from favorites' : 'Add to favorites'"
-         tabindex="0"
-          @keydown.enter="toggleFavorite"
-          @keydown.space.prevent="toggleFavorite"
-          role="button"
-      >
-        <Icon :icon="isFavorite ? 'mdi:heart' : 'mdi:heart-outline'" width="20" height="20"/>
-      </div>
-
-      <div
-          class="post-card__pin"
-          :title="post.pinned ?'Unpin' :'Pin'"
-          @click="$emit('pin', post.id)"
-          :aria-label="post.pinned ? 'Unpin post' : 'Pin post'"
-         tabindex="0"
-          @keydown.enter="$emit('pin', post.id)"
-          @keydown.space.prevent="$emit('pin', post.id)"
-          role="button"
-      >
-        <Icon :icon="post.pinned ? 'mdi:pin' : 'mdi:pin-outline'" width="20" height="20"/>
-      </div>
+  <article
+    class="post-card"
+    tabindex="0"
+    role="article"
+    :aria-label="post.title"
+    @keydown.enter="showDetails = true"
+  >
+    <!-- Kicker / category -->
+    <div class="post-card__kicker" aria-label="Category">
+      {{ post.category || post.source || 'News' }}
     </div>
 
-    <!-- Add click handler to the entire card content to show details -->
-    <div class="post-card__content" @click="showDetails = true"tabindex="0" role="button" aria-label="View post details">
-      <h4 class="post-card__title">{{ post.title }}</h4>
-      <p class="post-card__description">{{ post.body }}</p>
+    <!-- Headline — clickable to open details -->
+    <h3 class="post-card__title" @click="showDetails = true" tabindex="0" role="button">
+      {{ post.title }}
+    </h3>
 
-      <!-- Display additional informationfornews articles-->
-      <div v-if="post.source ||post.publishedAt" class="post-card__meta">
-        <span v-if="post.source" class="post-card__source">{{ post.source }}</span>
-        <span v-if="post.publishedAt" class="post-card__date">{{ formatDate(post.publishedAt) }}</span>
-      </div>
+    <!-- Excerpt -->
+    <p class="post-card__description">{{ post.body }}</p>
+
+    <!-- Hairline rule before meta -->
+    <div class="post-card__rule" aria-hidden="true"></div>
+
+    <!-- Meta row -->
+    <div class="post-card__meta">
+      <span v-if="post.source" class="post-card__source">{{ post.source }}</span>
+      <span v-if="post.source && post.publishedAt" class="post-card__sep" aria-hidden="true">·</span>
+      <time v-if="post.publishedAt" class="post-card__date" :datetime="post.publishedAt">
+        {{ formatDate(post.publishedAt) }}
+      </time>
     </div>
 
-<div class="post-card__footer">
+    <!-- Actions footer -->
+    <div class="post-card__footer">
+      <!-- Favorite toggle -->
+      <button
+        class="post-card__action"
+        :class="{ 'post-card__action--active': isFavorite }"
+        @click="toggleFavorite"
+        :aria-label="isFavorite ? 'Remove from favorites' : 'Add to favorites'"
+        :title="isFavorite ? 'Remove from favorites' : 'Add to favorites'"
+      >
+        <Icon :icon="isFavorite ? 'ph:heart-fill' : 'ph:heart'" width="16" height="16" />
+      </button>
+
+      <!-- Pin toggle -->
+      <button
+        class="post-card__action"
+        :class="{ 'post-card__action--active post-card__action--pin': post.pinned }"
+        @click="$emit('pin', post.id)"
+        :aria-label="post.pinned ? 'Unpin' : 'Pin'"
+        :title="post.pinned ? 'Unpin' : 'Pin'"
+      >
+        <Icon :icon="post.pinned ? 'ph:push-pin-fill' : 'ph:push-pin'" width="16" height="16" />
+      </button>
+
+      <!-- Delete -->
       <delete-icon
-       @delete="onDelete"
-          title="Delete post"
-          class="post-card__delete"
+        @delete="onDelete"
+        title="Delete post"
+        class="post-card__delete"
       />
 
-      <!-- Button to read full article or view details -->
-      <my-button
-         v-if="post.url && post.url !== '#'"
-          variant="primary"
-          size="small"
-          @click="openArticle(post.url)"
-          class="post-card__button"
+      <!-- Read / View -->
+      <button
+        v-if="post.url && post.url !== '#'"
+        class="post-card__read-btn"
+        @click="openArticle(post.url)"
+        aria-label="Read full article"
       >
-        <Icon icon="mdi:open-in-new" width="16" height="16"/>
-        <span>ReadFull Article</span>
-      </my-button>
+        Read Article
+        <Icon icon="ph:arrow-right" width="13" height="13" />
+      </button>
 
-      <my-button
-         v-else
-          variant="primary"
-         size="small"
-          @click="showDetails = true"
-          class="post-card__button"
+      <button
+        v-else
+        class="post-card__read-btn"
+        @click="showDetails = true"
+        aria-label="View details"
       >
-       <Icon icon="mdi:eye" width="16" height="16"/>
-        <span>View Details</span>
-      </my-button>
+        View Details
+        <Icon icon="ph:arrow-right" width="13" height="13" />
+      </button>
     </div>
-  </div>
+  </article>
 
- <PostDetailsModal
+  <PostDetailsModal
     v-if="showDetails"
     :post="post"
     @close="showDetails = false"
@@ -81,74 +93,54 @@
 </template>
 
 <script>
-import {DeleteIcon} from "@/shared/ui";
-import {Icon} from "@iconify/vue";
+import { DeleteIcon } from "@/shared/ui";
+import { Icon } from "@iconify/vue";
 import PostDetailsModal from "./PostDetailsModal.vue";
-import {formatDate } from "@/shared/lib/utils/dateUtils.js";
+import { formatDate } from "@/shared/lib/utils/dateUtils.js";
 import notificationManager from '@/shared/lib/utils/notificationManager.js';
 
 export default {
   name: "PostItem",
-components: {DeleteIcon, Icon, PostDetailsModal},
-
+  components: { DeleteIcon, Icon, PostDetailsModal },
   props: {
-    post: {type: Object, required: true},
+    post: { type: Object, required: true }
   },
-
   emits: ["delete", "pin"],
-
-data() {
+  data() {
     return {
       showDetails: false
     };
   },
-
-computed: {
-    isFavorite(){
-      // Checkif post is in favorites
-      // Added safety check for store state
+  computed: {
+    isFavorite() {
       const favorites = this.$store.state.post?.favorites || [];
       return favorites.some(fav => fav.id === this.post.id);
     }
   },
-
   methods: {
     onDelete() {
-this.$emit("delete",this.post.id);
-  },
-
+      this.$emit("delete", this.post.id);
+    },
     openArticle(url) {
-      // Added safety check for URL
       if (url && url !== '#') {
-        window.open(url,'_blank');
+        window.open(url, '_blank', 'noopener,noreferrer');
       }
-},
-
+    },
     formatDate(dateString) {
-      // Added safety check for date string
-      if(!dateString) return '';
-
-const options = {year:'numeric', month: 'short', day: 'numeric'};
+      if (!dateString) return '';
       const date = new Date(dateString);
-
-      // Check if date isvalid
-      if(isNaN(date.getTime())) return '';
-
-      return date.toLocaleDateString(undefined, options);
+      if (isNaN(date.getTime())) return '';
+      return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
     },
-
-   toggleFavorite() {
+    toggleFavorite() {
       if (this.isFavorite) {
-this.$store.commit("post/removeFavorite", this.post.id);
-        notificationManager.notify(`Removed "${this.post.title}" from favorites`, 'success');
+        this.$store.commit("post/removeFavorite", this.post.id);
+        notificationManager.notify(`Removed from saved`, 'success');
       } else {
-        // Create a copy of the post to avoid reference issues
-        const postCopy = {...this.post};
-        this.$store.commit("post/addFavorite", postCopy);
-        notificationManager.notify(`Added "${this.post.title}" to favorites`, 'success');
+        this.$store.commit("post/addFavorite", { ...this.post });
+        notificationManager.notify(`Saved to favorites`, 'success');
       }
     },
-
     formatDate
   }
 };
@@ -156,207 +148,185 @@ this.$store.commit("post/removeFavorite", this.post.id);
 
 <style scoped>
 .post-card {
-  position: relative;
-  overflow: hidden;
-  border-radius: 16px;
-  background: white;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), transform 0.2s;
   display: flex;
   flex-direction: column;
-  height: 100%;
-  animation: fadeInUp 0.4s ease forwards;
-  opacity: 0;
-  transform: translateY(15px);
-  border: 1pxsolid var(--color-neutral-100);
-  cursor: pointer;
+  padding: var(--spacing-lg) 0;
+  border-top: 1px solid var(--color-rule);
+  background: transparent;
+  transition: border-color var(--transition-fast);
+  animation: revealUp 0.4s ease both;
+  outline: none;
 }
 
-.post-card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+.post-card:first-child {
+  border-top: none;
 }
 
-@keyframes fadeInUp {
- to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+.post-card:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 4px;
+  border-radius: var(--border-radius-sm);
 }
 
-/* Add hover effect to card content */
-.post-card__content:hover {
-  background-color: var(--color-neutral-50);
+@keyframes revealUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
-.dark-theme .post-card__content:hover {
-  background-color: var(--color-neutral-50);
+/* Kicker */
+.post-card__kicker {
+  font-family: var(--font-sans);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--letter-spacing-caps);
+  text-transform: uppercase;
+  color: var(--color-accent);
+  margin-bottom: 0.5rem;
+  line-height: 1;
 }
 
-.post-card__header {
-  display: flex;
-  justify-content: space-between;
-  padding: 16px 16px 0 16px;
-}
-
-.post-card__favorite,
-.post-card__pin {
-  color: var(--color-neutral-400);
-  transition: all0.2s ease;
-  cursor: pointer;
-  border-radius: 50%;
-  padding: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(10px);
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
-}
-
-.dark-theme .post-card__favorite,
-.dark-theme .post-card__pin {
-  background: rgba(30, 30, 30, 0.7);
-}
-
-.post-card__favorite:hover,
-.post-card__pin:hover {
-  background-color: var(--color-neutral-200);
-  transform: scale(1.1);
-  box-shadow: 0 4px 8px rgba(0,0, 0, 0.1);
-}
-
-.post-card__favorite:hover,
-.post-card__favorite--active {
-  color: var(--color-error-500);
-}
-
-.post-card__favorite--active {
-  animation: pulse 0.4s ease;
-  background-color: var(--color-error-50);
-}
-
-.dark-theme .post-card__favorite--active {
-  background-color: var(--color-error-900);
-}
-
-.post-card__pin:hover {
-  color: var(--color-warning-500);
-  background-color: var(--color-warning-50);
-}
-
-.dark-theme .post-card__pin:hover {
-  background-color: var(--color-warning-900);
-}
-
-@keyframes pulse {
-  0% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.2);
-  }
-  100% {
-    transform: scale(1.1);
-  }
-}
-
-.post-card__content {
-  flex: 1;
-  padding: 16px;
-  display: flex;
-  flex-direction: column;
-}
-
+/* Headline */
 .post-card__title {
-  font-size: 18px;
-  font-weight: 600;
-  color: var(--color-neutral-900);
-  margin-bottom: 12px;
-  line-height: 1.4;
+  font-family: var(--font-serif);
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--line-height-snug);
   letter-spacing: -0.01em;
+  color: var(--color-ink);
+  margin-bottom: 0.625rem;
+  cursor: pointer;
+  transition: color var(--transition-fast);
+  background: none;
+  border: none;
+  text-align: left;
+  padding: 0;
 }
 
+.post-card__title:hover {
+  color: var(--color-accent);
+}
+
+/* Excerpt */
 .post-card__description {
-  font-size: 15px;
-  color: var(--color-neutral-600);
-  line-height: 1.6;
-  margin-bottom: 16px;
+  font-family: var(--font-sans);
+  font-size: var(--font-size-sm);
+  color: var(--color-ink-muted);
+  line-height: var(--line-height-base);
   flex: 1;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  margin-bottom: 0.75rem;
 }
 
+/* Rule */
+.post-card__rule {
+  border: none;
+  border-top: 1px solid var(--color-rule);
+  margin-bottom: 0.75rem;
+}
+
+/* Meta */
 .post-card__meta {
   display: flex;
-  justify-content: space-between;
-  margin-top: auto;
-  padding-top: 16px;
-  border-top: 1px solid var(--color-neutral-100);
-  font-size: 13px;
-  color: var(--color-neutral-500);
+  align-items: center;
+  gap: 0.375rem;
+  font-family: var(--font-sans);
+  font-size: var(--font-size-xs);
+  color: var(--color-ink-faint);
+  margin-bottom: 0.75rem;
 }
 
 .post-card__source {
-  font-weight: 500;
-  color: var(--color-primary-600);
+  color: var(--color-accent);
+  font-weight: var(--font-weight-medium);
 }
 
-.post-card__date {
-  color: var(--color-neutral-500);
+.post-card__sep {
+  color: var(--color-rule);
 }
 
+/* Footer */
 .post-card__footer {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 16px;
-  border-top: 1px solid var(--color-neutral-100);
-  gap: 12px;
+  gap: 0.25rem;
 }
 
-.post-card__delete {
-  margin-right: auto;
-}
-
-.post-card__button {
-  min-width: 140px;
-  border-radius: 24px!important;
-  font-weight: 500 !important;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05) !important;
+/* Action buttons (heart, pin, delete) */
+.post-card__action {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap:8px;
-  transition: all 0.2s ease;
-  padding: 10px 20px;
+  width: 2rem;
+  height: 2rem;
+  background: transparent;
+  border: none;
+  color: var(--color-ink-faint);
+  border-radius: var(--border-radius-sm);
+  cursor: pointer;
+  transition: color var(--transition-fast), background var(--transition-fast);
+  flex-shrink: 0;
 }
 
-.post-card__button:hover {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
-transform: translateY(-2px) !important;
+.post-card__action:hover {
+  color: var(--color-ink-muted);
+  background: var(--color-neutral-100);
 }
 
-.post-card__button--edit {
-  min-width: auto;
-  padding: 8px 16px !important;
+.post-card__action--active {
+  color: var(--color-accent) !important;
 }
+
+.post-card__action--active.post-card__action--pin {
+  color: var(--color-warning-500) !important;
+}
+
+.post-card__delete {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Read button */
+.post-card__read-btn {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-family: var(--font-sans);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: 0.03em;
+  color: var(--color-ink-muted);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0.25rem 0;
+  transition: color var(--transition-fast);
+  border-bottom: 1px solid transparent;
+}
+
+.post-card__read-btn:hover {
+  color: var(--color-accent);
+  border-bottom-color: var(--color-accent);
+}
+
+/* Stagger delays for list items */
+.post-card:nth-child(1)  { animation-delay: 0.04s; }
+.post-card:nth-child(2)  { animation-delay: 0.08s; }
+.post-card:nth-child(3)  { animation-delay: 0.12s; }
+.post-card:nth-child(4)  { animation-delay: 0.16s; }
+.post-card:nth-child(5)  { animation-delay: 0.20s; }
+.post-card:nth-child(6)  { animation-delay: 0.24s; }
+.post-card:nth-child(7)  { animation-delay: 0.28s; }
+.post-card:nth-child(8)  { animation-delay: 0.32s; }
+.post-card:nth-child(n+9){ animation-delay: 0.36s; }
 
 @media (max-width: 768px) {
   .post-card__title {
-    font-size: 16px;
-  }
-
-  .post-card__button {
-    min-width: auto;
-    padding: 8px 16px !important;
-    font-size: 14px !important;
-  }
-
-  .post-card__button span {
-    display: none;
-  }
-
-  .post-card__button {
-padding: 8px !important;
+    font-size: var(--font-size-lg);
   }
 }
 </style>

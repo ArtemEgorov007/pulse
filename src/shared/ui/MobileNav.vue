@@ -1,39 +1,56 @@
 <template>
-  <nav class="mobile-nav" v-if="isMobile">
-    <router-link to="/posts" class="mobile-nav__link" :class="{ 'mobile-nav__link--active': $route.name === 'Posts' }">
-      <Icon icon="mdi:home" width="24" height="24"/>
-      <span class="link-text">Home</span>
+  <nav class="mobile-nav" v-if="isMobile" aria-label="Mobile navigation">
+    <router-link
+      to="/posts"
+      class="mobile-nav__link"
+      :class="{ 'mobile-nav__link--active': $route.name === 'Posts' }"
+      aria-label="Home"
+    >
+      <Icon icon="ph:house-simple" width="22" height="22" />
+      <span class="mobile-nav__label">Home</span>
     </router-link>
 
-    <router-link to="/favorites" class="mobile-nav__link"
-                 :class="{ 'mobile-nav__link--active': $route.name === 'Favorites' }">
-      <Icon icon="mdi:heart" width="24" height="24"/>
-      <span class="link-text">Favorites</span>
+    <router-link
+      to="/favorites"
+      class="mobile-nav__link"
+      :class="{ 'mobile-nav__link--active': $route.name === 'Favorites' }"
+      aria-label="Saved"
+    >
+      <Icon icon="ph:heart" width="22" height="22" />
+      <span class="mobile-nav__label">Saved</span>
     </router-link>
 
-    <router-link to="/about" class="mobile-nav__link" :class="{ 'mobile-nav__link--active': $route.name === 'About' }">
-      <Icon icon="mdi:information" width="24" height="24"/>
-      <span class="link-text">About</span>
+    <router-link
+      to="/about"
+      class="mobile-nav__link"
+      :class="{ 'mobile-nav__link--active': $route.name === 'About' }"
+      aria-label="About"
+    >
+      <Icon icon="ph:info" width="22" height="22" />
+      <span class="mobile-nav__label">About</span>
     </router-link>
+
+    <div class="mobile-nav__divider" aria-hidden="true"></div>
+
+    <div class="mobile-nav__link mobile-nav__theme">
+      <theme-switcher />
+    </div>
   </nav>
 </template>
 
 <script>
-import {Icon} from '@iconify/vue';
-import {ref, onMounted, onBeforeUnmount} from 'vue';
+import { Icon } from '@iconify/vue';
+import { ref, onMounted, onBeforeUnmount } from 'vue';
+import ThemeSwitcher from './ThemeSwitcher.vue';
 
 export default {
   name: 'MobileNav',
-  components: {
-    Icon
-  },
+  components: { Icon, ThemeSwitcher },
   setup() {
     const isMobile = ref(false);
-    const isSmallScreen = ref(false);
 
     const checkMobile = () => {
       isMobile.value = window.innerWidth <= 768;
-      isSmallScreen.value = window.innerWidth <= 480;
     };
 
     onMounted(() => {
@@ -45,10 +62,7 @@ export default {
       window.removeEventListener('resize', checkMobile);
     });
 
-    return {
-      isMobile,
-      isSmallScreen
-    };
+    return { isMobile };
   }
 };
 </script>
@@ -60,75 +74,57 @@ export default {
   left: 0;
   right: 0;
   display: flex;
-  justify-content: space-around;
   align-items: center;
-  padding: 12px 0;
-  background: linear-gradient(135deg, var(--color-primary-700), var(--color-primary-900));
-  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+  justify-content: space-around;
+  padding: 0.5rem 0 calc(0.5rem + env(safe-area-inset-bottom));
+  background: var(--color-paper);
+  border-top: 2px solid var(--color-ink);
   z-index: 1000;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.dark-theme .mobile-nav {
-  background: linear-gradient(135deg, var(--color-neutral-100), var(--color-neutral-200));
-  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 
 .mobile-nav__link {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  gap: 3px;
+  padding: 0.5rem 1rem;
   text-decoration: none;
-  color: var(--color-primary-100);
-  font-size: 12px;
-  font-weight: 500;
-  padding: 8px 16px;
-  border-radius: var(--border-radius-md);
-  transition: all var(--transition-fast);
-  gap: 4px;
+  color: var(--color-ink-muted);
+  transition: color var(--transition-fast);
+  border-radius: var(--border-radius-sm);
 }
 
 .mobile-nav__link:hover {
-  background-color: rgba(255, 255, 255, 0.1);
-  color: white;
-  transform: translateY(-2px);
+  color: var(--color-ink);
 }
 
 .mobile-nav__link--active {
-  background-color: rgba(255, 255, 255, 0.2);
-  color: white;
-
+  color: var(--color-accent);
 }
 
-.dark-theme .mobile-nav__link {
-  color: var(--color-primary-200);
+.mobile-nav__label {
+  font-family: var(--font-sans);
+  font-size: 9px;
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
-.dark-theme .mobile-nav__link:hover {
-  background-color: rgba(255, 255, 255, 0.15);
-  color: white;
+.mobile-nav__divider {
+  width: 1px;
+  height: 2rem;
+  background: var(--color-rule);
 }
 
-.dark-theme .mobile-nav__link--active {
-  background-color: rgba(255, 255, 255, 0.25);
-  color: white;
-  padding: var(--spacing-lg);
+.mobile-nav__theme {
+  color: inherit;
+  padding: 0.5rem;
 }
 
-.link-text {
-  font-size: 10px;
-  margin-top: 2px;
-}
-
-/*Always hide text on mobile devices */
-@media (max-width: 768px) {
-  .link-text {
+@media (max-width: 380px) {
+  .mobile-nav__label {
     display: none;
-  }
-
-  .mobile-nav__link {
-    padding: 16px 0;
   }
 }
 </style>

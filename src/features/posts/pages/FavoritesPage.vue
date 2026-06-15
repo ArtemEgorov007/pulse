@@ -1,48 +1,57 @@
 <template>
   <div class="favorites-page">
-    <header class="favorites-page__header">
-      <router-link to="/posts" class="favorites-page__back">
-        ← Back to Posts
-      </router-link>
-      <h1 class="favorites-page__title">Favorite Posts</h1>
-      <div class="favorites-page__count">
-        {{ favorites.length }} {{ favorites.length === 1 ? 'post' : 'posts' }}
-      </div>
-    </header>
+    <div class="favorites-page__top-rule"></div>
 
-    <main class="favorites-page__main">
-      <div v-if="favorites.length === 0" class="favorites-page__empty">
-       <Icon icon="mdi:heart-outline" width="64" height="64" class="favorites-page__empty-icon"/>
-        <h2>No Favorite Posts Yet</h2>
-        <p>Click the heart icon on posts to add them to your favorites</p>
-        <my-button @click="$router.push('/posts')" variant="primary">
-          Browse Posts
-        </my-button>
-      </div>
+    <div class="container">
+      <header class="favorites-page__header">
+        <div class="favorites-page__header-left">
+          <router-link to="/posts" class="favorites-page__back">
+            <Icon icon="ph:arrow-left" width="14" height="14" />
+            Back to feed
+          </router-link>
+          <div class="favorites-page__title-row">
+            <h1 class="favorites-page__title">Saved Stories</h1>
+            <span class="favorites-page__count" v-if="favorites.length > 0">
+              {{ favorites.length }} {{ favorites.length === 1 ? 'article' : 'articles' }}
+            </span>
+          </div>
+        </div>
+      </header>
 
-      <post-list
+      <div class="favorites-page__rule"></div>
+
+      <main class="favorites-page__main">
+        <div v-if="favorites.length === 0" class="favorites-page__empty">
+          <Icon icon="ph:heart" width="40" height="40" class="favorites-page__empty-icon" />
+          <h2 class="favorites-page__empty-title">No saved articles yet</h2>
+          <p class="favorites-page__empty-desc">Click the heart icon on any story to save it here</p>
+          <my-button @click="$router.push('/posts')" variant="primary" size="medium">
+            Browse Stories
+          </my-button>
+        </div>
+
+        <post-list
           v-else
           :posts="favorites"
           @delete="handleRemoveFavorite"
-      />
-    </main>
+        />
+      </main>
+    </div>
   </div>
 </template>
 
 <script>
-import {mapState} from "vuex";
-import {PostList} from "@/features/posts/components";
-import {Icon} from "@iconify/vue";
+import { mapState } from "vuex";
+import { PostList } from "@/features/posts/components";
+import { Icon } from "@iconify/vue";
 
 export default {
   name: "FavoritesPage",
-  components: {PostList, Icon},
-
+  components: { PostList, Icon },
   computed: {
     ...mapState("post", ["favorites"])
   },
-
-  methods:{
+  methods: {
     handleRemoveFavorite(postId) {
       this.$store.commit("post/removeFavorite", postId);
     }
@@ -52,121 +61,108 @@ export default {
 
 <style scoped>
 .favorites-page {
-  padding: clamp(1.25rem, 1rem + 1.25vw, 2.5rem);
- max-width: 1200px;
-  margin: 0 auto;
+  padding-bottom: var(--spacing-3xl);
 }
 
+.favorites-page__top-rule {
+  border-top: 3px solid var(--color-ink);
+  transition: border-color 0.35s ease;
+}
+
+/* Header */
 .favorites-page__header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: var(--spacing-lg);
-  padding-bottom: var(--spacing-md);
-  border-bottom: 1px solid var(--color-border);
-  flex-wrap: wrap;
-  gap: var(--spacing-md);
+  padding: var(--spacing-xl) 0 var(--spacing-lg);
 }
 
 .favorites-page__back {
-  text-decoration: none;
-  color: var(--color-primary-600);
-  font-weight: var(--font-weight-medium);
-  transition: color var(--transition-fast);
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: var(--spacing-xs);
+  gap: 0.375rem;
+  font-family: var(--font-sans);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  letter-spacing: var(--letter-spacing-caps);
+  text-transform: uppercase;
+  color: var(--color-ink-muted);
+  text-decoration: none;
+  margin-bottom: var(--spacing-md);
+  transition: color var(--transition-fast);
 }
 
 .favorites-page__back:hover {
-  color: var(--color-primary-800);
+  color: var(--color-accent);
+}
+
+.favorites-page__title-row {
+  display: flex;
+  align-items: baseline;
+  gap: var(--spacing-md);
+  flex-wrap: wrap;
 }
 
 .favorites-page__title {
-  font-size: var(--font-size-3xl);
-  font-weight: var(--font-weight-bold);
-  margin: 0;
-  color: var(--color-neutral-900);
+  font-family: var(--font-serif);
+  font-size: clamp(1.75rem, 3.5vw, 2.5rem);
+  font-weight: var(--font-weight-medium);
+  letter-spacing: -0.025em;
+  color: var(--color-ink);
+  line-height: 1;
+  transition: color 0.35s ease;
 }
 
 .favorites-page__count {
-  background: var(--color-primary-600);
-  color: white;
-  padding: var(--spacing-sm) var(--spacing-md);
-  border-radius: var(--border-radius-full);
-  font-weight: var(--font-weight-medium);
+  font-family: var(--font-sans);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--letter-spacing-caps);
+  text-transform: uppercase;
+  color: var(--color-accent);
+  padding: 0.25rem 0.625rem;
+  border: 1px solid rgba(214, 72, 43, 0.3);
+  background: var(--color-accent-light);
+  border-radius: var(--border-radius-sm);
 }
 
-.favorites-page__main {
-  margin-top: var(--spacing-lg);
+/* Rule */
+.favorites-page__rule {
+  border: none;
+  border-top: 1px solid var(--color-rule);
+  margin-bottom: var(--spacing-xl);
 }
 
+/* Empty */
 .favorites-page__empty {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   text-align: center;
-  padding: var(--spacing-2xl) var(--spacing-lg);
-  color: var(--color-neutral-500);
-  background: white;
-  border-radius: var(--border-radius-lg);
-  box-shadow: var(--shadow-md);
+  padding: var(--spacing-3xl) var(--spacing-lg);
+  border: 1px solid var(--color-rule);
 }
 
 .favorites-page__empty-icon {
-  color: var(--color-neutral-300);
+  color: var(--color-ink-faint);
   margin-bottom: var(--spacing-md);
 }
 
-.favorites-page__empty h2 {
-  color: var(--color-neutral-800);
-  margin-bottom: var(--spacing-sm);
+.favorites-page__empty-title {
+  font-family: var(--font-serif);
   font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-ink);
+  margin-bottom: var(--spacing-sm);
 }
 
-.favorites-page__empty p {
-  margin-bottom:var(--spacing-lg);
-  color: var(--color-neutral-600);
-}
-
-.dark-theme .favorites-page__header {
-  border-bottom: 1px solid var(--color-border);
-}
-
-.dark-theme .favorites-page__back {
-  color: var(--color-primary-400);
-}
-
-.dark-theme .favorites-page__back:hover {
-  color: var(--color-primary-300);
-}
-
-.dark-theme .favorites-page__title{
-  color: var(--color-neutral-500);
-}
-
-.dark-theme .favorites-page__empty {
-  background: var(--color-card-background);
-  color: var(--color-neutral-400);
-}
-
-.dark-theme .favorites-page__empty h2 {
-  color: var(--color-neutral-200);
-}
-
-.dark-theme .favorites-page__empty-icon {
-  color: var(--color-neutral-600);
+.favorites-page__empty-desc {
+  font-size: var(--font-size-sm);
+  color: var(--color-ink-muted);
+  margin-bottom: var(--spacing-xl);
 }
 
 @media (max-width: 768px) {
-  .favorites-page__header {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
   .favorites-page__title {
-    font-size: var(--font-size-2xl);
+    font-size: 1.625rem;
   }
 }
 </style>

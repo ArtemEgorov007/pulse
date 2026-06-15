@@ -1,274 +1,287 @@
 <template>
-  <div class="my-dialog" @click="$emit('close')"role="dialog" aria-modal="true" aria-labelledby="modal-title">
-    <div class="post-details-modal" @click.stop>
-      <div class="post-details-modal__header">
-        <h2 id="modal-title" class="post-details-modal__title">{{ post.title }}</h2>
-        <button class="post-details-modal__close"
-          @click="$emit('close')"
-          aria-label="Close dialog"
-         ref="closeButton"
-        >
-          <Icon icon="mdi:close" width="24" height="24"/>
-        </button>
-      </div>
+  <teleport to="body">
+    <transition name="modal">
+      <div
+        class="my-dialog"
+        @click="$emit('close')"
+        role="dialog"
+        aria-modal="true"
+        :aria-labelledby="`modal-title-${post.id}`"
+      >
+        <article class="post-details-modal" @click.stop>
+          <!-- Close -->
+          <button
+            class="post-details-modal__close"
+            @click="$emit('close')"
+            aria-label="Close"
+            ref="closeButton"
+          >
+            <Icon icon="ph:x" width="18" height="18" />
+          </button>
 
-      <div class="post-details-modal__content">
-        <p class="post-details-modal__body">{{ post.body }}</p>
+          <!-- Header -->
+          <header class="post-details-modal__header">
+            <div v-if="post.source || post.category" class="post-details-modal__kicker">
+              {{ post.category || post.source }}
+            </div>
+            <h2
+              :id="`modal-title-${post.id}`"
+              class="post-details-modal__title"
+            >
+              {{ post.title }}
+            </h2>
+          </header>
 
-        <div class="post-details-modal__info">
-          <div v-if="post.source" class="post-details-modal__info-item">
-<span class="post-details-modal__info-label">Source:</span>
-            <span class="post-details-modal__info-value">{{ post.source }}</span>
+          <!-- Rule -->
+          <div class="post-details-modal__rule" aria-hidden="true"></div>
+
+          <!-- Meta -->
+          <div class="post-details-modal__meta">
+            <span v-if="post.source" class="post-details-modal__source">{{ post.source }}</span>
+            <span v-if="post.source && post.publishedAt" aria-hidden="true">·</span>
+            <time v-if="post.publishedAt" :datetime="post.publishedAt">
+              {{ formatDate(post.publishedAt) }}
+            </time>
           </div>
 
-          <div v-if="post.publishedAt" class="post-details-modal__info-item">
-            <span class="post-details-modal__info-label">Published:</span>
-            <span class="post-details-modal__info-value">{{ formatDate(post.publishedAt) }}</span>
+          <!-- Body -->
+          <div class="post-details-modal__content">
+            <p class="post-details-modal__body">{{ post.body }}</p>
           </div>
-        </div>
-      </div>
 
-     <div class="post-details-modal__actions">
-        <my-button @click="$emit('close')" variant="secondary">
-          Close</my-button>
-
-        <my-button
-          v-if="post.url && post.url !== '#'"
-          @click="openArticle(post.url)"
-          variant="primary"
-       >
-          <Icon icon="mdi:open-in-new" width="16" height="16"/>
-          <span>ReadFull Article</span>
-        </my-button>
+          <!-- Actions -->
+          <div class="post-details-modal__actions">
+            <my-button @click="$emit('close')" variant="secondary" size="small">
+              Close
+            </my-button>
+            <my-button
+              v-if="post.url && post.url !== '#'"
+              @click="openArticle(post.url)"
+              variant="primary"
+              size="small"
+            >
+              <Icon icon="ph:arrow-square-out" width="14" height="14" />
+              Read Full Article
+            </my-button>
+          </div>
+        </article>
       </div>
-    </div>
-  </div>
+    </transition>
+  </teleport>
 </template>
 
 <script>
-import {Icon} from "@iconify/vue";
-import {formatDate } from "@/shared/lib/utils/dateUtils.js";
+import { Icon } from "@iconify/vue";
+import { formatDate } from "@/shared/lib/utils/dateUtils.js";
 
 export default {
   name: "PostDetailsModal",
-  components:{Icon},
-
+  components: { Icon },
   props: {
-    post: {type: Object, required: true}
+    post: { type: Object, required: true }
   },
-
   emits: ["close"],
-
   mounted() {
-    // Focus the close button when modalopens
     this.$nextTick(() => {
       if (this.$refs.closeButton) {
         this.$refs.closeButton.focus();
       }
     });
-
-    // Add escape key listener
     document.addEventListener('keydown', this.handleKeydown);
+    document.body.style.overflow = 'hidden';
   },
-
   beforeUnmount() {
-    // Remove escape key listenerdocument.removeEventListener('keydown', this.handleKeydown);
+    document.removeEventListener('keydown', this.handleKeydown);
+    document.body.style.overflow = '';
   },
-
   methods: {
     openArticle(url) {
       if (url && url !== '#') {
-        window.open(url, '_blank');
+        window.open(url, '_blank', 'noopener,noreferrer');
       }
     },
-
     handleKeydown(event) {
-      // Close modal on Escape key
       if (event.key === 'Escape') {
         this.$emit('close');
       }
     },
-
     formatDate
   }
 };
 </script>
 
 <style scoped>
+/* Backdrop */
 .my-dialog {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.7);
+  inset: 0;
+  background: rgba(22, 21, 26, 0.75);
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 1000;
-  backdrop-filter: blur(5px);
+  padding: var(--spacing-lg);
+  backdrop-filter: blur(4px);
 }
 
+/* Modal panel */
 .post-details-modal {
-  background: white;
-  border-radius: 20px;
+  position: relative;
+  background: var(--color-surface);
+  border: 1px solid var(--color-rule);
+  border-top: 3px solid var(--color-ink);
+  width: 100%;
+  max-width: 680px;
   max-height: 90vh;
-overflow: hidden;
+  overflow-y: auto;
   display: flex;
   flex-direction: column;
-  width: 100%;
-  max-width: 800px;
-  transform: translateY(0);
-  transition: transform 0.3s ease;
-  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+  box-shadow: var(--shadow-xl);
+  border-radius: var(--border-radius-sm);
 }
 
-.dark-theme .post-details-modal {
-  background: var(--color-card-background);
-}
-
-.post-details-modal__header {
-  padding: 32px;
-  border-bottom: 1px solid var(--color-neutral-200);
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-}
-
-.post-details-modal__title {
-  margin: 0;
-  font-size: 32px;
-  font-weight: 700;
-  color: var(--color-neutral-900);
-  line-height: 1.3;
-}
-
+/* Close button */
 .post-details-modal__close {
-  background: none;
-  border: none;
-  color: var(--color-neutral-500);
-  cursor: pointer;
-  padding: 12px;
-  border-radius: 50%;
-  transition: all 0.2s ease;
+  position: absolute;
+  top: var(--spacing-md);
+  right: var(--spacing-md);
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 48px;
-  height: 48px;
+  width: 2rem;
+  height: 2rem;
+  background: transparent;
+  border: 1px solid var(--color-rule);
+  border-radius: var(--border-radius-sm);
+  color: var(--color-ink-muted);
+  cursor: pointer;
+  transition: all var(--transition-fast);
 }
 
 .post-details-modal__close:hover {
- background-color: var(--color-neutral-100);
-  color: var(--color-neutral-700);
-  transform: rotate(90deg);
+  background: var(--color-neutral-100);
+  color: var(--color-ink);
+  border-color: var(--color-ink-muted);
 }
 
-.dark-theme .post-details-modal__close:hover {
-  background-color: var(--color-neutral-700);
-  color: var(--color-neutral-200);
+/* Header */
+.post-details-modal__header {
+  padding: var(--spacing-xl) var(--spacing-xl) 0;
+  padding-right: calc(var(--spacing-xl) + 2.5rem);
 }
 
+.post-details-modal__kicker {
+  font-family: var(--font-sans);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--letter-spacing-caps);
+  text-transform: uppercase;
+  color: var(--color-accent);
+  margin-bottom: 0.625rem;
+}
+
+.post-details-modal__title {
+  font-family: var(--font-serif);
+  font-size: clamp(1.375rem, 2.5vw, 2rem);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--line-height-tight);
+  letter-spacing: -0.02em;
+  color: var(--color-ink);
+  margin: 0;
+}
+
+/* Rule */
+.post-details-modal__rule {
+  border: none;
+  border-top: 1px solid var(--color-rule);
+  margin: var(--spacing-md) var(--spacing-xl) 0;
+}
+
+/* Meta */
+.post-details-modal__meta {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.625rem var(--spacing-xl);
+  font-family: var(--font-sans);
+  font-size: var(--font-size-xs);
+  color: var(--color-ink-faint);
+}
+
+.post-details-modal__source {
+  color: var(--color-accent);
+  font-weight: var(--font-weight-medium);
+}
+
+/* Body */
 .post-details-modal__content {
-  padding: 32px;
-  overflow-y: auto;
+  padding: 0 var(--spacing-xl) var(--spacing-lg);
   flex: 1;
 }
 
 .post-details-modal__body {
-  font-size: 18px;
-  color: var(--color-neutral-700);
-  line-height: 1.8;
-  margin-bottom: 32px;
+  font-family: var(--font-serif);
+  font-size: var(--font-size-lg);
+  color: var(--color-ink-muted);
+  line-height: var(--line-height-loose);
   white-space: pre-wrap;
+  font-weight: var(--font-weight-light);
 }
 
-.dark-theme .post-details-modal__body {
-  color: var(--color-neutral-300);
-}
-
-.post-details-modal__info {
-  background-color: var(--color-neutral-50);
-  border-radius: 16px;
-  padding: 24px;
-}
-
-.dark-theme.post-details-modal__info {
-  background-color: var(--color-neutral-800);
-}
-
-.post-details-modal__info-item {
-  display: flex;
-  padding: 12px 0;
-}
-
-.post-details-modal__info-item:not(:last-child) {
-  border-bottom: 1px solid var(--color-neutral-200);
-}
-
-.dark-theme .post-details-modal__info-item:not(:last-child) {
-  border-bottom: 1px solid var(--color-neutral-700);
-}
-
-.post-details-modal__info-label {
-  font-weight: 600;
-  color: var(--color-neutral-600);
-  width: 120px;
-  flex-shrink: 0;
-}
-
-.dark-theme .post-details-modal__info-label {
-  color: var(--color-neutral-400);
-}
-
-.post-details-modal__info-value {
-  color: var(--color-neutral-800);
-  flex: 1;
-  font-weight: 500;
-}
-
-.dark-theme .post-details-modal__info-value {
-  color: var(--color-neutral-200);
-}
-
+/* Actions */
 .post-details-modal__actions {
-  padding: 32px;
-  border-top: 1px solid var(--color-neutral-200);
   display: flex;
   justify-content: flex-end;
-  gap: 16px;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-md) var(--spacing-xl);
+  border-top: 1px solid var(--color-rule);
 }
 
-.dark-theme .post-details-modal__actions {
-  border-top: 1pxsolid var(--color-neutral-700);
+/* Transitions */
+.modal-enter-active {
+  transition: opacity 0.25s ease;
 }
 
-@media (max-width: 768px) {
-  .post-details-modal__title {
-    font-size: 24px;
-  }
+.modal-leave-active {
+  transition: opacity 0.2s ease;
+}
 
-  .post-details-modal__header,
-  .post-details-modal__content,
-  .post-details-modal__actions {
-    padding: 24px;
-  }
+.modal-enter-from,
+.modal-leave-to {
+  opacity: 0;
+}
 
-  .post-details-modal__info-label {
-    width: 100px;
-  }
+.modal-enter-active .post-details-modal {
+  animation: slideUp 0.3s cubic-bezier(0.2, 0.8, 0.3, 1) both;
+}
 
-  .post-details-modal__actions {
-    flex-direction: column;
-  }
+.modal-leave-active .post-details-modal {
+  animation: slideDown 0.2s ease both;
+}
 
-  .post-details-modal__actions my-button {
-    width: 100%;
+@keyframes slideUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+
+@keyframes slideDown {
+  from { transform: translateY(0);    opacity: 1; }
+  to   { transform: translateY(12px); opacity: 0; }
+}
+
+@media (max-width: 640px) {
+  .my-dialog {
+    padding: var(--spacing-sm);
+    align-items: flex-end;
   }
 
   .post-details-modal {
-    margin: 20px;
-    max-height: calc(100vh - 40px);
+    max-height: 85vh;
+    border-radius: var(--border-radius-lg) var(--border-radius-lg) 0 0;
+  }
+
+  .post-details-modal__actions {
+    flex-direction: column-reverse;
   }
 }
 </style>

@@ -1,75 +1,61 @@
 <template>
   <input
-      :class="inputClass"
-      :value="modelValue"
-      :placeholder="placeholder"
-      :type="type"
-      :disabled="disabled"
-      @input="handleInput"
-      @blur="handleBlur"
-      @focus="handleFocus"
-      class="my-input"
- >
+    :class="inputClass"
+    :value="modelValue"
+    :placeholder="placeholder"
+    :type="type"
+    :disabled="disabled"
+    @input="handleInput"
+    @blur="handleBlur"
+    @focus="handleFocus"
+    class="my-input"
+  />
 </template>
 
 <script>
 export default {
   name: 'MyInput',
-
   props: {
     modelValue: {
       type: [String, Number],
       default: ''
     },
-
     placeholder: {
       type: String,
       default: ''
     },
-
     type: {
       type: String,
-      default:'text',
-      validator: (value) => [
-        'text', 'password', 'email', 'number', 'tel', 'url'
-      ].includes(value)
+      default: 'text',
+      validator: (value) => ['text', 'password', 'email', 'number', 'tel', 'url'].includes(value)
     },
-
     disabled: {
       type: Boolean,
       default: false
     },
-
     size: {
       type: String,
-      default:'medium',
+      default: 'medium',
       validator: (value) => ['small', 'medium', 'large'].includes(value)
     }
   },
-
   emits: ['update:modelValue', 'input', 'blur', 'focus'],
-
   computed: {
     inputClass() {
       return [
         `my-input--${this.size}`,
-       {
-         'my-input--disabled': this.disabled
-        }
+        { 'my-input--disabled': this.disabled }
       ];
     }
   },
-
   methods: {
     handleInput(event) {
       this.$emit('update:modelValue', event.target.value);
-     this.$emit('input', event.target.value);
+      this.$emit('input', event.target.value);
     },
-
     handleBlur(event) {
       this.$emit('blur', event);
     },
-
     handleFocus(event) {
       this.$emit('focus', event);
     }
@@ -79,59 +65,39 @@ export default {
 
 <style scoped>
 .my-input {
-  padding: 12px 16px;
-  border: 2px solid var(--color-neutral-200);
-  border-radius: 12px;
-  font-family: inherit;
-  font-size: 16px;
-  transition: all 0.3s ease;
+  width: 100%;
+  font-family: var(--font-sans);
+  font-size: var(--font-size-sm);
+  color: var(--color-ink);
+  background: var(--color-surface);
+  border: 1px solid var(--color-rule);
+  border-radius: var(--border-radius-sm);
   outline: none;
-  width:100%;
-  background-color: var(--color-neutral-50);
-  color: var(--color-neutral-800);
- box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast), background var(--transition-fast);
+}
+
+.my-input::placeholder {
+  color: var(--color-ink-faint);
 }
 
 .my-input:focus {
-  border-color: var(--color-primary-500);
-  box-shadow: 0 4px 12px rgba(66, 153, 225, 0.2);
-  background-color: white;
+  border-color: var(--color-ink-muted);
+  box-shadow: 0 0 0 3px var(--color-accent-muted);
+  background: var(--color-surface);
 }
 
 .my-input:disabled {
-  background-color: var(--color-neutral-100);
+  background: var(--color-neutral-100);
   cursor: not-allowed;
+  color: var(--color-ink-faint);
 }
 
-.dark-theme .my-input {
-  background-color: var(--color-neutral-800);
-color: var(--color-neutral-100);
-  border: 2px solid var(--color-neutral-700);
-}
-
-.dark-theme .my-input:focus {
-  border-color: var(--color-primary-400);
-  box-shadow: 0 4px 12px rgba(147, 197, 253, 0.3);
- background-color: var(--color-neutral-900);
-}
-
-.my-input--small {
-  padding: 8px 12px;
-  font-size: 14px;
-}
-
-.my-input--medium {
-  padding: 12px 16px;
-  font-size: 16px;
-}
-
-.my-input--large {
-  padding: 16px 20px;
-  font-size: 18px;
-}
+.my-input--small  { padding: 0.375rem 0.625rem; }
+.my-input--medium { padding: 0.5rem 0.875rem; }
+.my-input--large  { padding: 0.75rem 1rem; font-size: var(--font-size-base); }
 
 .my-input--disabled {
-  background-color: #f5f5f5;
   cursor: not-allowed;
+  opacity: 0.6;
 }
 </style>

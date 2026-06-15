@@ -1,104 +1,132 @@
+@import url('https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;0,6..72,600;0,6..72,700;1,6..72,300;1,6..72,400;1,6..72,500&family=Hanken+Grotesk:wght@300;400;500;600;700&display=swap');
+
 :root {
-    /* Primary Colors */
-    --color-primary-50: #eff6ff;
-    --color-primary-100: #dbeafe;
-    --color-primary-200: #bfdbfe;
-    --color-primary-300: #93c5fd;
-    --color-primary-400: #60a5fa;
-    --color-primary-500: #3b82f6;
-    --color-primary-600: #2563eb; /* основной акцент */
-    --color-primary-700: #1d4ed8;
-    --color-primary-800: #1e40af;
-    --color-primary-900: #1e3a8a;
+    /* ── Palette: Ivory broadsheet ── */
+    --color-paper:          #f7f4ee;
+    --color-paper-warm:     #f0ece3;
+    --color-ink:            #16151a;
+    --color-ink-muted:      #5a5660;
+    --color-ink-faint:      #a09aaa;
+    --color-rule:           #d8d3ca;
+    --color-surface:        #ffffff;
+    --color-surface-alt:    #f0ece3;
 
-    /* Secondary Colors */
-    --color-secondary-500: #8b5cf6;
-    --color-secondary-600: #7c3aed;
+    /* ── Accent: editorial red ── */
+    --color-accent:         #d6482b;
+    --color-accent-hover:   #b83a21;
+    --color-accent-light:   #fdf0ed;
+    --color-accent-muted:   rgba(214, 72, 43, 0.12);
 
-    /* Neutral Colors */
-    --color-neutral-50: #f9fafb; /* фон */
-    --color-neutral-100: #f3f4f6; /* карточки */
-    --color-neutral-200: #e5e7eb; /* бордеры */
-    --color-neutral-300: #d1d5db;
-    --color-neutral-400: #9ca3af; /* второстепенный текст */
-    --color-neutral-500: #6b7280;
-    --color-neutral-600: #4b5563;
-    --color-neutral-700: #374151;
-    --color-neutral-800: #1f2937; /* основной текст */
-    --color-neutral-900: #111827;
+    /* ── Legacy primaries (kept for internal refs, mapped to ink/accent) ── */
+    --color-primary-50:     #fdf0ed;
+    --color-primary-100:    #faddd6;
+    --color-primary-200:    #f4b8ab;
+    --color-primary-300:    #ec8c78;
+    --color-primary-400:    #e06349;
+    --color-primary-500:    #d6482b;
+    --color-primary-600:    #b83a21;
+    --color-primary-700:    #972e1a;
+    --color-primary-800:    #7a2516;
+    --color-primary-900:    #5c1a0f;
 
-    /* Success Colors */
-    --color-success-50: #ecfdf5;
-    --color-success-500: #10b981;
-    --color-success-600: #059669;
+    /* ── Neutrals ── */
+    --color-neutral-50:     #f7f4ee;
+    --color-neutral-100:    #f0ece3;
+    --color-neutral-200:    #d8d3ca;
+    --color-neutral-300:    #b5aeaa;
+    --color-neutral-400:    #8c8490;
+    --color-neutral-500:    #6b6370;
+    --color-neutral-600:    #504a55;
+    --color-neutral-700:    #38333d;
+    --color-neutral-800:    #221f27;
+    --color-neutral-900:    #16151a;
 
-    /* Warning Colors */
-    --color-warning-50: #fffbeb;
-    --color-warning-500: #f59e0b;
-    --color-warning-600: #d97706;
+    /* ── Semantic ── */
+    --color-background:     var(--color-paper);
+    --color-border:         var(--color-rule);
+    --color-text:           var(--color-ink);
+    --color-text-muted:     var(--color-ink-muted);
 
-    /* Error Colors */
-    --color-error-50: #fef2f2;
-    --color-error-500: #ef4444;
-    --color-error-600: #dc2626;
+    /* ── Status ── */
+    --color-success-50:     #ecfdf5;
+    --color-success-500:    #10b981;
+    --color-success-600:    #059669;
+    --color-warning-50:     #fffbeb;
+    --color-warning-500:    #f59e0b;
+    --color-warning-600:    #d97706;
+    --color-error-50:       #fef2f2;
+    --color-error-500:      #ef4444;
+    --color-error-600:      #dc2626;
 
-    /* Backgrounds & Text */
-    --color-background: var(--color-neutral-50);
-    --color-surface: var(--color-neutral-100);
-    --color-border: var(--color-neutral-200);
-    --color-text: var(--color-neutral-800);
-    --color-text-muted: var(--color-neutral-500);
+    /* ── Typography ── */
+    --font-serif:           'Newsreader', Georgia, 'Times New Roman', serif;
+    --font-sans:            'Hanken Grotesk', 'Helvetica Neue', Arial, sans-serif;
 
+    --font-size-xs:         0.6875rem;  /* 11px */
+    --font-size-sm:         0.8125rem;  /* 13px */
+    --font-size-base:       1rem;       /* 16px */
+    --font-size-lg:         1.125rem;   /* 18px */
+    --font-size-xl:         1.25rem;    /* 20px */
+    --font-size-2xl:        1.5rem;     /* 24px */
+    --font-size-3xl:        2rem;       /* 32px */
+    --font-size-4xl:        2.625rem;   /* 42px */
+    --font-size-5xl:        3.5rem;     /* 56px */
 
-    /* Spacing Scale */
-    --spacing-xxs: 0.25rem; /* 4px */
-    --spacing-xs: 0.5rem; /* 8px */
-    --spacing-sm: 0.75rem; /* 12px */
-    --spacing-md: 1rem; /* 16px */
-    --spacing-lg: 1.5rem; /* 24px */
-    --spacing-xl: 2rem; /* 32px */
-    --spacing-2xl: 3rem; /* 48px */
-    --spacing-3xl: 4rem; /* 64px */
-
-    /* Typography Scale */
-    --font-size-xs: 0.75rem; /* 12px */
-    --font-size-sm: 0.875rem; /* 14px */
-    --font-size-base: 1rem; /* 16px */
-    --font-size-lg: 1.125rem; /* 18px */
-    --font-size-xl: 1.25rem; /* 20px */
-    --font-size-2xl: 1.5rem; /* 24px */
-    --font-size-3xl: 1.875rem; /* 30px */
-    --font-size-4xl: 2.25rem; /* 36px */
-    --font-size-5xl: 3rem; /* 48px */
-
-    /* Font Weights */
-    --font-weight-regular: 400;
-    --font-weight-medium: 500;
+    --font-weight-light:    300;
+    --font-weight-regular:  400;
+    --font-weight-medium:   500;
     --font-weight-semibold: 600;
-    --font-weight-bold: 700;
+    --font-weight-bold:     700;
 
-    /* Border Radius */
-    --border-radius-sm: 0.25rem; /* 4px */
-    --border-radius-md: 0.5rem; /* 8px */
-    --border-radius-lg: 0.75rem; /* 12px */
-    --border-radius-xl: 1rem; /* 16px */
+    --line-height-tight:    1.2;
+    --line-height-snug:     1.4;
+    --line-height-base:     1.6;
+    --line-height-loose:    1.8;
+
+    --letter-spacing-caps:  0.08em;
+    --letter-spacing-wide:  0.03em;
+
+    /* ── Spacing ── */
+    --spacing-xxs:  0.25rem;
+    --spacing-xs:   0.5rem;
+    --spacing-sm:   0.75rem;
+    --spacing-md:   1rem;
+    --spacing-lg:   1.5rem;
+    --spacing-xl:   2rem;
+    --spacing-2xl:  3rem;
+    --spacing-3xl:  4.5rem;
+
+    /* ── Layout ── */
+    --container-max:    1200px;
+    --content-max:      740px;
+    --column-gap:       2rem;
+
+    /* ── Borders & radius ── */
+    --border-radius-sm:   3px;
+    --border-radius-md:   6px;
+    --border-radius-lg:   10px;
+    --border-radius-xl:   16px;
     --border-radius-full: 9999px;
 
-    /* Shadows */
-    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-    --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    /* ── Shadows ── */
+    --shadow-sm:  0 1px 3px rgba(22, 21, 26, 0.06);
+    --shadow-md:  0 4px 12px rgba(22, 21, 26, 0.08), 0 1px 4px rgba(22, 21, 26, 0.06);
+    --shadow-lg:  0 8px 24px rgba(22, 21, 26, 0.1), 0 2px 8px rgba(22, 21, 26, 0.06);
+    --shadow-xl:  0 20px 48px rgba(22, 21, 26, 0.12);
 
-    /* Transitions */
-    --transition-fast: 150ms ease;
+    /* ── Transitions ── */
+    --transition-fast:   150ms ease;
     --transition-normal: 300ms ease;
-    --transition-slow: 500ms ease;
+    --transition-slow:   500ms ease;
 
-    /* Breakpoints */
-    --breakpoint-sm: 640px;
-    --breakpoint-md: 768px;
-    --breakpoint-lg: 1024px;
-    --breakpoint-xl: 1280px;
-    --breakpoint-2xl: 1536px;
+    /* ── Breakpoints (for reference in comments) ── */
+    --breakpoint-sm:  640px;
+    --breakpoint-md:  768px;
+    --breakpoint-lg:  1024px;
+    --breakpoint-xl:  1280px;
+
+    /* ── Secondary (legacy, unused but kept) ── */
+    --color-secondary-500: var(--color-accent);
+    --color-secondary-600: var(--color-accent-hover);
+    --color-card-background: var(--color-surface);
 }

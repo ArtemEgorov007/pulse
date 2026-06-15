@@ -4,18 +4,19 @@
       @click="toggleTheme"
       class="theme-switcher__button"
       :aria-label="`Switch to ${currentTheme === 'light' ? 'dark' : 'light'} theme`"
+      :title="`Switch to ${currentTheme === 'light' ? 'dark' : 'light'} theme`"
     >
       <Icon
         v-if="currentTheme === 'light'"
-        icon="mdi:white-balance-sunny"
-        width="20"
-        height="20"
+        icon="ph:moon"
+        width="16"
+        height="16"
       />
       <Icon
         v-else
-        icon="mdi:moon-waning-crescent"
-        width="20"
-       height="20"
+        icon="ph:sun"
+        width="16"
+        height="16"
       />
     </button>
   </div>
@@ -26,16 +27,13 @@ import { Icon } from '@iconify/vue';
 
 export default {
   name: 'ThemeSwitcher',
-  components: {
-    Icon
-  },
+  components: { Icon },
   data() {
     return {
       currentTheme: 'light'
-   };
+    };
   },
   mounted() {
-    // Check for saved theme or respect system preference
     const savedTheme = localStorage.getItem('theme');
     const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
 
@@ -54,19 +52,15 @@ export default {
       localStorage.setItem('theme', this.currentTheme);
     },
     applyTheme() {
-      // Add a class to the body for transition
       document.body.classList.add('theme-transition');
-
       if (this.currentTheme === 'dark') {
         document.documentElement.classList.add('dark-theme');
       } else {
         document.documentElement.classList.remove('dark-theme');
       }
-
-      // Remove transition class after animation completes
       setTimeout(() => {
         document.body.classList.remove('theme-transition');
-      }, 300);
+      }, 350);
     }
   }
 };
@@ -74,61 +68,27 @@ export default {
 
 <style scoped>
 .theme-switcher__button {
-  background: transparent;
-  border: 1px solid transparent;
-  border-radius: var(--border-radius-full);
-  padding: var(--spacing-sm);
-  cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all var(--transition-fast);
-  color: var(--color-primary-100);
-  position: relative;
-  overflow: hidden;
-}
-
-.theme-switcher__button::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: var(--color-primary-50);
-  opacity: 0;
-  transition: opacity var(--transition-fast);
-  z-index: -1;
+  width: 2rem;
+  height: 2rem;
+  background: transparent;
+  border: 1px solid var(--color-rule);
+  border-radius: var(--border-radius-sm);
+  cursor: pointer;
+  color: var(--color-ink-muted);
+  transition: color var(--transition-fast), border-color var(--transition-fast), background var(--transition-fast);
 }
 
 .theme-switcher__button:hover {
-  background-color: var(--color-primary-50);
-  color: var(--color-primary-800);
-  border-color: var(--color-primary-400);
+  color: var(--color-ink);
+  border-color: var(--color-ink-muted);
+  background: var(--color-surface-alt);
 }
 
-.theme-switcher__button:hover::before {
-  opacity: 1;
-}
-
-.dark-theme .theme-switcher__button {
-  border-color: var(--color-primary-600);
-  color: var(--color-primary-400);
-}
-
-.dark-theme .theme-switcher__button::before {
-  background: var(--color-primary-900);
-}
-
-.dark-theme .theme-switcher__button:hover {
-  background-color: var(--color-primary-900);
-  color: var(--color-primary-200);
-  border-color: var(--color-primary-500);
-}
-
-/* Additional styling for better visibility */
-.navbar__list li:last-child {
-  display: flex;
-  align-items: center;
+.theme-switcher__button:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
 }
 </style>
