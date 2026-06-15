@@ -15,7 +15,7 @@
           </p>
 
           <p class="about-page__text">
-            One example is our News Feed application: a modern technology news platform that allows you to browse,
+            One example is Pulse: a modern technology news platform that allows you to browse,
             search, and save your favorite articles. This solution demonstrates ease of use, attention to detail,
             and thoughtful architecture.
           </p>

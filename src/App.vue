@@ -8,7 +8,7 @@
 
     <footer class="app-footer">
       <div class="app-footer__content">
-        <p>© 2025 News Feed. All rights reserved.</p>
+        <p>© 2025 Pulse. All rights reserved.</p>
         <div class="app-footer__links">
           <router-link to="/about">About</router-link>
           <router-link to="/posts">Posts</router-link>

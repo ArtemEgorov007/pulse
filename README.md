@@ -1,6 +1,6 @@
-# 🚀 News Feed — Modern Vue 3 News Application
+# 🚀 Pulse — Modern Vue 3 News Application
 
-**News Feed** is a modern news application built with **Vue 3** and **Vite** that demonstrates best practices in frontend development. This project showcases API integration, state management, responsive UI design, and modern development techniques.
+**Pulse** is a modern news application built with **Vue 3** and **Vite** that demonstrates best practices in frontend development. This project showcases API integration, state management, responsive UI design, and modern development techniques.
 
 ---
 
@@ -37,8 +37,8 @@
 ### 1. Clone the Repository
 
 ```sh
-git clone https://github.com/your-username/news_feed.git
-cd news_feed
+git clone https://github.com/ArtemEgorov007/pulse.git
+cd pulse
 ```
 
 ### 2. Install Dependencies
@@ -77,7 +77,7 @@ npm run build
 
 The application fetches real-time technology news from [NewsAPI](https://newsapi.org/) and presents them in an engaging interface:
 
-* **News Feed**: Browse the latest technology news articles
+* **Pulse**: Browse the latest technology news articles
 * **Favorites**: Save articles to your personal favorites list
 * **Search**: Find specific articles by keywords
 * **Sorting**: Sort articles by title or description

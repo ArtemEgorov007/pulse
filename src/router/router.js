@@ -29,7 +29,7 @@ const routes = [
 ]
 
 const router = createRouter({
-    history: createWebHistory('/news_feed/'),
+    history: createWebHistory('/pulse/'),
     routes,
 })
 

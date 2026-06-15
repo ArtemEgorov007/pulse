@@ -5,7 +5,7 @@
     <div class="navbar__content">
       <div class="navbar__brand">
         <router-link to="/" class="navbar__logo">
-          <span class="navbar__logo-text">NewsFeed</span>
+          <span class="navbar__logo-text">Pulse</span>
         </router-link>
       </div>
 

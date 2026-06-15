@@ -3,7 +3,7 @@ import {defineConfig} from 'vite'
 import vue from '@vitejs/plugin-vue'
 
 const isProd = process.env.NODE_ENV === 'production'
-const base = isProd ? '/news_feed/' : '/'
+const base = isProd ? '/pulse/' : '/'
 
 // https://vite.dev/config/
 export default defineConfig({
