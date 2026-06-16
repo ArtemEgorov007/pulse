@@ -42,7 +42,7 @@
 
 <script>
 import { mapState } from "vuex";
-import { PostList } from "@/features/posts/components";
+import PostList from "@/features/posts/components/PostList.vue";
 import { Icon } from "@iconify/vue";
 
 export default {

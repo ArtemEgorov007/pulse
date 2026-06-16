@@ -1,1 +1,1 @@
-export { formatDate } from './dateUtils.js';
+export { formatDate, formatRelativeTime } from './dateUtils.js';

@@ -1,58 +1,61 @@
 import newsService from "@/features/posts/services/newsService.js";
 
 export const postActions = {
-    async fetchPosts({state, commit}) {
+    async fetchPosts({ state, commit }) {
         if (state.isPostsLoading) return;
 
         commit('setLoading', true);
         commit('setError', null);
         commit('setPage', 1);
+        commit('setHasMore', true);
 
         try {
-            // Using our news service to fetch general news
-            const newsData = await newsService.fetchTopHeadlines(
-                state.page, 
-                state.limit
-            );
+            const newsData = await newsService.fetchArticles({
+                page: 1,
+                pageSize: state.limit,
+                tag: state.activeTag
+            });
 
-            commit('setTotalPages', Math.ceil(newsData.totalResults / state.limit));
             commit('setPosts', newsData.articles);
+            commit('setHasMore', newsData.hasMore);
         } catch (error) {
-            console.error('Error fetching general news:', error);
             commit('setError', error.message);
-            // Show fallback posts if API fails
-            const fallbackData = newsService.getFallbackData(state.page, state.limit);
+            const fallbackData = newsService.getFallbackData(1, state.limit);
             commit('setPosts', fallbackData.articles);
-            commit('setTotalPages', Math.ceil(fallbackData.totalResults / state.limit));
+            commit('setHasMore', fallbackData.hasMore);
         } finally {
             commit('setLoading', false);
         }
     },
 
-    async loadMorePosts({state, commit}) {
-        if (state.isPostsLoading || state.page >= state.totalPages) return;
+    async loadMorePosts({ state, commit }) {
+        if (state.isPostsLoading || !state.hasMore) return;
 
+        const nextPage = state.page + 1;
         commit('setLoading', true);
-        commit('setPage', state.page + 1);
+        commit('setPage', nextPage);
 
         try {
-            // Load more general news
-            const newsData = await newsService.fetchTopHeadlines(
-                state.page, 
-                state.limit
-            );
+            const newsData = await newsService.fetchArticles({
+                page: nextPage,
+                pageSize: state.limit,
+                tag: state.activeTag
+            });
 
-            commit('setTotalPages', Math.ceil(newsData.totalResults / state.limit));
             commit('addPosts', newsData.articles);
+            commit('setHasMore', newsData.hasMore);
         } catch (error) {
-            console.error('Error loading more general news:', error);
             commit('setError', error.message);
-            // Add fallback posts if API fails
-            const fallbackData = newsService.getFallbackData(state.page, state.limit);
+            const fallbackData = newsService.getFallbackData(nextPage, state.limit);
             commit('addPosts', fallbackData.articles);
-            commit('setTotalPages', Math.ceil(fallbackData.totalResults / state.limit));
+            commit('setHasMore', fallbackData.hasMore);
         } finally {
             commit('setLoading', false);
         }
+    },
+
+    setTag({ commit, dispatch }, tag) {
+        commit('setActiveTag', tag);
+        dispatch('fetchPosts');
     }
 };

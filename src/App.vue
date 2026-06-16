@@ -17,7 +17,7 @@
           <router-link to="/favorites">Saved</router-link>
           <router-link to="/about">About</router-link>
         </div>
-        <p class="app-footer__copy">&copy; 2025 Pulse. All rights reserved.</p>
+        <p class="app-footer__copy">&copy; {{ currentYear }} Pulse. All rights reserved.</p>
       </div>
     </footer>
 
@@ -36,6 +36,7 @@ export default {
   components: { Navbar, MobileNav, NotificationContainer },
   setup() {
     const isMobile = ref(false);
+    const currentYear = new Date().getFullYear();
 
     const checkMobile = () => {
       isMobile.value = window.innerWidth <= 768;
@@ -50,7 +51,7 @@ export default {
       window.removeEventListener('resize', checkMobile);
     });
 
-    return { isMobile };
+    return { isMobile, currentYear };
   }
 };
 </script>

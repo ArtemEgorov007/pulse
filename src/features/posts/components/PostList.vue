@@ -2,6 +2,12 @@
   <div class="post-list">
     <!-- Featured lead — first pinned or first post -->
     <div v-if="featuredPost" class="featured-post" @click="openFeatured" tabindex="0" role="button" :aria-label="featuredPost.title" @keydown.enter="openFeatured">
+      <img
+        v-if="featuredPost.image"
+        :src="featuredPost.image"
+        :alt="featuredPost.title"
+        class="featured-post__cover"
+      />
       <div class="featured-post__kicker">
         {{ featuredPost.category || featuredPost.source || 'Featured' }}
       </div>
@@ -11,7 +17,9 @@
       <div class="featured-post__meta">
         <span v-if="featuredPost.source" class="featured-post__source">{{ featuredPost.source }}</span>
         <span v-if="featuredPost.source && featuredPost.publishedAt" aria-hidden="true">·</span>
-        <time v-if="featuredPost.publishedAt">{{ formatDate(featuredPost.publishedAt) }}</time>
+        <time v-if="featuredPost.publishedAt" :datetime="featuredPost.publishedAt" :title="formatDate(featuredPost.publishedAt)">
+          {{ formatRelativeTime(featuredPost.publishedAt) }}
+        </time>
         <button class="featured-post__read-btn" @click.stop="openFeaturedArticle">
           Read Article
           <Icon icon="ph:arrow-right" width="13" height="13" />
@@ -47,9 +55,10 @@
 
 <script>
 import { mapMutations } from "vuex";
-import { PostItem } from "@/features/posts/components";
+import PostItem from "./PostItem.vue";
 import PostDetailsModal from "./PostDetailsModal.vue";
 import { Icon } from "@iconify/vue";
+import { formatRelativeTime, formatDate } from "@/shared/lib/utils/dateUtils.js";
 
 export default {
   name: "PostList",
@@ -107,12 +116,8 @@ export default {
       this.isMobile = window.innerWidth <= 768;
       this.isTablet = window.innerWidth <= 1024;
     },
-    formatDate(dateString) {
-      if (!dateString) return '';
-      const date = new Date(dateString);
-      if (isNaN(date.getTime())) return '';
-      return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-    },
+    formatDate,
+    formatRelativeTime,
     openFeatured() {
       if (!this.featuredPost) return;
       if (this.featuredPost.url && this.featuredPost.url !== '#') return;
@@ -153,6 +158,15 @@ export default {
 .featured-post:focus-visible {
   outline: 2px solid var(--color-accent);
   outline-offset: 4px;
+}
+
+.featured-post__cover {
+  display: block;
+  width: 100%;
+  height: 280px;
+  object-fit: cover;
+  border-bottom: 1px solid var(--color-rule);
+  margin-bottom: var(--spacing-lg);
 }
 
 .featured-post__kicker {

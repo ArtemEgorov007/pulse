@@ -26,3 +26,4 @@ src/features/posts/NEWS_API_INTEGRATION.md
 *.sln
 *.sw?
 .lingma
+.env

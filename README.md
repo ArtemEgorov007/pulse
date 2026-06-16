@@ -15,7 +15,7 @@
 * 📚 **Infinite Scrolling** for seamless content browsing
 * 🛠 **Custom Directives** and reusable UI components
 * 🌌 **Clean, Maintainable Code** following modern best practices
-* 📰 **Real-time Technology News** powered by NewsAPI
+* 📰 **Real-time Technology News** powered by Dev.to API
 
 ---
 
@@ -26,7 +26,7 @@
 * [Vuex](https://vuex.vuejs.org/) - State management pattern + library
 * [Vue Router](https://router.vuejs.org/) - Official router for Vue.js
 * [Iconify](https://iconify.design/) - Universal icon framework
-* [NewsAPI](https://newsapi.org/) - Real-time news API service
+* [Dev.to API](https://developers.forem.com/api) - Public tech articles API (no key required)
 * [Axios](https://axios-http.com/) - Promise based HTTP client
 * CSS Variables & Modern CSS Features
 
@@ -49,13 +49,7 @@ npm install
 
 ### 3. Environment Configuration
 
-Create a `.env` file in the project root and add your NewsAPI key:
-
-```env
-VITE_NEWS_API_KEY=your_newsapi_key_here
-```
-
-To obtain an API key, register for free at [newsapi.org](https://newsapi.org/).
+No API key required — Pulse uses the public [Dev.to API](https://developers.forem.com/api) which is keyless and CORS-friendly.
 
 ### 4. Development Server
 
@@ -75,7 +69,7 @@ npm run build
 
 ## 🖥 Application Features
 
-The application fetches real-time technology news from [NewsAPI](https://newsapi.org/) and presents them in an engaging interface:
+The application fetches real-time technology news from the [Dev.to API](https://dev.to/api/articles) and presents them in an engaging interface:
 
 * **Pulse**: Browse the latest technology news articles
 * **Favorites**: Save articles to your personal favorites list
@@ -104,8 +98,8 @@ Recent enhancements to the user interface include:
 
 ## 🐞 Known Limitations
 
-* The application uses the free tier of NewsAPI which has request limitations
-* Data persistence is limited to browser session (favorites reset on page reload)
+* The application uses the public Dev.to API which may have rate limits under heavy load
+* Favorites are persisted in localStorage
 * Some experimental features may have inconsistent behavior
 
 ---
@@ -114,7 +108,6 @@ Recent enhancements to the user interface include:
 
 Planned enhancements for the application:
 
-- [ ] Implement local storage for persistent data saving
 - [ ] Add pagination as an alternative to infinite scrolling
 - [ ] Support for multiple news categories
 - [ ] User authentication and personalized feeds

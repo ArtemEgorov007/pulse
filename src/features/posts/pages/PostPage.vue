@@ -12,6 +12,17 @@
           </router-link>
         </div>
 
+        <!-- Category chips -->
+        <div class="posts-page__chips" role="group" aria-label="Filter by category">
+          <button
+            v-for="chip in tagChips"
+            :key="chip.value"
+            class="posts-page__chip"
+            :class="{ 'posts-page__chip--active': activeTag === chip.value }"
+            @click="handleTagChange(chip.value)"
+          >{{ chip.label }}</button>
+        </div>
+
         <!-- Controls row -->
         <div class="posts-page__controls">
           <div class="posts-page__search-wrap">
@@ -103,9 +114,7 @@
       <div v-if="error" class="error-message" role="alert">
         <Icon icon="ph:warning" width="20" height="20" />
         <div>
-          <p><strong>Unable to load data from the server.</strong></p>
-          <p>Displaying sample data while we resolve this issue.</p>
-          <p v-if="isGithubPages">Note: API access is restricted on GitHub Pages.</p>
+          <p><strong>Couldn't reach the news source. Showing recent cached stories.</strong></p>
         </div>
       </div>
     </main>
@@ -128,7 +137,7 @@
 <script>
 import { mapState, mapActions, mapGetters, mapMutations } from "vuex";
 import { Icon } from "@iconify/vue";
-import { PostList } from "@/features/posts/components";
+import PostList from "@/features/posts/components/PostList.vue";
 
 export default {
   name: "GlobalPost",
@@ -140,7 +149,8 @@ export default {
       "searchQuery",
       "page",
       "limit",
-      "totalPages",
+      "hasMore",
+      "activeTag",
       "sortOptions",
       "showScrollTop",
       "error",
@@ -150,8 +160,15 @@ export default {
     favoritesCount() {
       return this.favorites.length;
     },
-    isGithubPages() {
-      return window.location.hostname.includes('github.io');
+    tagChips() {
+      return [
+        { label: 'All', value: '' },
+        { label: 'Technology', value: 'technology' },
+        { label: 'Programming', value: 'programming' },
+        { label: 'AI', value: 'ai' },
+        { label: 'WebDev', value: 'webdev' },
+        { label: 'JavaScript', value: 'javascript' }
+      ];
     }
   },
   methods: {
@@ -161,7 +178,7 @@ export default {
       "setShowScrollTop",
       "removePost"
     ]),
-    ...mapActions("post", ["loadMorePosts", "fetchPosts"]),
+    ...mapActions("post", ["loadMorePosts", "fetchPosts", "setTag"]),
     deletePost(postId) {
       this.removePost(postId);
     },
@@ -176,6 +193,9 @@ export default {
     },
     handleSortChange(value) {
       this.setSelectedSort(value);
+    },
+    handleTagChange(tag) {
+      this.setTag(tag);
     }
   },
   mounted() {
@@ -478,6 +498,40 @@ export default {
 
 @keyframes spin {
   to { transform: rotate(360deg); }
+}
+
+/* ── Category chips ── */
+.posts-page__chips {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.posts-page__chip {
+  font-family: var(--font-sans);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--letter-spacing-caps);
+  text-transform: uppercase;
+  color: var(--color-ink-muted);
+  background: transparent;
+  border: 1px solid var(--color-rule);
+  border-radius: var(--border-radius-sm);
+  padding: 0.25rem 0.625rem;
+  cursor: pointer;
+  transition: color var(--transition-fast), border-color var(--transition-fast);
+  line-height: 1.4;
+}
+
+.posts-page__chip:hover {
+  color: var(--color-accent);
+  border-color: var(--color-accent);
+}
+
+.posts-page__chip--active {
+  color: var(--color-accent);
+  border-color: var(--color-accent);
+  background: var(--color-accent-light);
 }
 
 @media (max-width: 768px) {
