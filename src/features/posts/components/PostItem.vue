@@ -8,7 +8,7 @@
   >
     <!-- Kicker / category -->
     <div class="post-card__kicker" aria-label="Category">
-      {{ post.category || post.source || 'News' }}
+      {{ post.category || 'Tech' }}
     </div>
 
     <!-- Headline — clickable to open details -->
@@ -26,9 +26,19 @@
     <div class="post-card__meta">
       <span v-if="post.source" class="post-card__source">{{ post.source }}</span>
       <span v-if="post.source && post.publishedAt" class="post-card__sep" aria-hidden="true">·</span>
-      <time v-if="post.publishedAt" class="post-card__date" :datetime="post.publishedAt">
-        {{ formatDate(post.publishedAt) }}
+      <time v-if="post.publishedAt" class="post-card__date" :datetime="post.publishedAt" :title="formatDate(post.publishedAt)">
+        {{ formatRelativeTime(post.publishedAt) }}
       </time>
+      <span v-if="post.readingTime" class="post-card__sep" aria-hidden="true">·</span>
+      <span v-if="post.readingTime" class="post-card__reading-time">{{ post.readingTime }} min read</span>
+      <span v-if="post.reactions" class="post-card__sep" aria-hidden="true">·</span>
+      <span v-if="post.reactions" class="post-card__reactions" :title="`${post.reactions} reactions`">
+        <Icon icon="ph:heart" width="12" height="12" />{{ post.reactions }}
+      </span>
+      <span v-if="post.comments" class="post-card__sep" aria-hidden="true">·</span>
+      <span v-if="post.comments" class="post-card__comments" :title="`${post.comments} comments`">
+        <Icon icon="ph:chat-circle" width="12" height="12" />{{ post.comments }}
+      </span>
     </div>
 
     <!-- Actions footer -->
@@ -96,7 +106,7 @@
 import { DeleteIcon } from "@/shared/ui";
 import { Icon } from "@iconify/vue";
 import PostDetailsModal from "./PostDetailsModal.vue";
-import { formatDate } from "@/shared/lib/utils/dateUtils.js";
+import { formatDate, formatRelativeTime } from "@/shared/lib/utils/dateUtils.js";
 import notificationManager from '@/shared/lib/utils/notificationManager.js';
 
 export default {
@@ -126,12 +136,8 @@ export default {
         window.open(url, '_blank', 'noopener,noreferrer');
       }
     },
-    formatDate(dateString) {
-      if (!dateString) return '';
-      const date = new Date(dateString);
-      if (isNaN(date.getTime())) return '';
-      return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-    },
+    formatDate,
+    formatRelativeTime,
     toggleFavorite() {
       if (this.isFavorite) {
         this.$store.commit("post/removeFavorite", this.post.id);
@@ -140,8 +146,7 @@ export default {
         this.$store.commit("post/addFavorite", { ...this.post });
         notificationManager.notify(`Saved to favorites`, 'success');
       }
-    },
-    formatDate
+    }
   }
 };
 </script>
@@ -245,6 +250,14 @@ export default {
 
 .post-card__sep {
   color: var(--color-rule);
+}
+
+.post-card__reading-time,
+.post-card__reactions,
+.post-card__comments {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2rem;
 }
 
 /* Footer */
