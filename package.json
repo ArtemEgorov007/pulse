@@ -1,7 +1,7 @@
 {
   "name": "pulse",
   "version": "1.0.0",
-  "description": "A modern news application built with Vue 3 and Vite, featuring real-time technology news from NewsAPI",
+  "description": "A modern news application built with Vue 3 and Vite, featuring real-time technology news from the Dev.to API",
   "private": true,
   "type": "module",
   "scripts": {
@@ -14,7 +14,7 @@
     "vite",
     "news",
     "api",
-    "newsapi",
+    "devto",
     "technology",
     "frontend"
   ],
