@@ -7,6 +7,9 @@
         :src="featuredPost.image"
         :alt="featuredPost.title"
         class="featured-post__cover"
+        loading="lazy"
+        decoding="async"
+        @error="onCoverError"
       />
       <div class="featured-post__kicker">
         {{ featuredPost.category || featuredPost.source || 'Featured' }}
@@ -118,6 +121,10 @@ export default {
     },
     formatDate,
     formatRelativeTime,
+    onCoverError(event) {
+      // Hide broken cover images so the featured block falls back to text
+      event.target.style.display = 'none';
+    },
     openFeatured() {
       if (!this.featuredPost) return;
       if (this.featuredPost.url && this.featuredPost.url !== '#') return;

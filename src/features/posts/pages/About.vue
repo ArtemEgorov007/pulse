@@ -102,7 +102,7 @@ export default {
   components: { Icon },
   data() {
     return {
-      techStack: ['Vue 3', 'Vue Router', 'Vuex', 'Vite', 'Composition API', 'Axios', 'NewsAPI', 'ES6+']
+      techStack: ['Vue 3', 'Vue Router', 'Vuex', 'Vite', 'Composition API', 'Axios', 'Dev.to API', 'ES6+']
     };
   }
 };

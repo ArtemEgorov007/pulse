@@ -54,7 +54,7 @@
           <div class="feature-card__num" aria-hidden="true">03</div>
           <Icon icon="ph:bell-simple" width="28" height="28" class="feature-card__icon" />
           <h3 class="feature-card__title">Live Feed</h3>
-          <p class="feature-card__description">Fresh stories pulled straight from the NewsAPI in real time.</p>
+          <p class="feature-card__description">Fresh stories pulled straight from the Dev.to API in real time.</p>
         </div>
       </div>
     </div>
