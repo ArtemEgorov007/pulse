@@ -140,13 +140,14 @@ export default {
   letter-spacing: -0.025em;
   color: var(--color-ink);
   line-height: var(--line-height-tight);
-  margin-bottom: var(--spacing-sm);
+  margin-bottom: var(--spacing-lg);
   transition: color 0.35s ease;
 }
 
 .about-page__subtitle {
   font-family: var(--font-sans);
   font-size: var(--font-size-base);
+  line-height: var(--line-height-loose);
   color: var(--color-ink-muted);
   transition: color 0.35s ease;
 }
