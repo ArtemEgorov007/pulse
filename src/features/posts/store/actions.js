@@ -1,5 +1,19 @@
 import newsService from "@/features/posts/services/newsService.js";
 
+async function fetchArticlesWithFallback({ page, pageSize, tag }) {
+    try {
+        return {
+            data: await newsService.fetchArticles({ page, pageSize, tag }),
+            error: null
+        };
+    } catch (error) {
+        return {
+            data: newsService.getFallbackData(page, pageSize),
+            error: error.message || 'Failed to fetch articles'
+        };
+    }
+}
+
 export const postActions = {
     async fetchPosts({ state, commit }) {
         if (state.isPostsLoading) return;
@@ -9,23 +23,16 @@ export const postActions = {
         commit('setPage', 1);
         commit('setHasMore', true);
 
-        try {
-            const newsData = await newsService.fetchArticles({
-                page: 1,
-                pageSize: state.limit,
-                tag: state.activeTag
-            });
+        const { data, error } = await fetchArticlesWithFallback({
+            page: 1,
+            pageSize: state.limit,
+            tag: state.activeTag
+        });
 
-            commit('setPosts', newsData.articles);
-            commit('setHasMore', newsData.hasMore);
-        } catch (error) {
-            commit('setError', error.message);
-            const fallbackData = newsService.getFallbackData(1, state.limit);
-            commit('setPosts', fallbackData.articles);
-            commit('setHasMore', fallbackData.hasMore);
-        } finally {
-            commit('setLoading', false);
-        }
+        commit('setPosts', data.articles);
+        commit('setHasMore', data.hasMore);
+        commit('setError', error);
+        commit('setLoading', false);
     },
 
     async loadMorePosts({ state, commit }) {
@@ -35,23 +42,16 @@ export const postActions = {
         commit('setLoading', true);
         commit('setPage', nextPage);
 
-        try {
-            const newsData = await newsService.fetchArticles({
-                page: nextPage,
-                pageSize: state.limit,
-                tag: state.activeTag
-            });
+        const { data, error } = await fetchArticlesWithFallback({
+            page: nextPage,
+            pageSize: state.limit,
+            tag: state.activeTag
+        });
 
-            commit('addPosts', newsData.articles);
-            commit('setHasMore', newsData.hasMore);
-        } catch (error) {
-            commit('setError', error.message);
-            const fallbackData = newsService.getFallbackData(nextPage, state.limit);
-            commit('addPosts', fallbackData.articles);
-            commit('setHasMore', fallbackData.hasMore);
-        } finally {
-            commit('setLoading', false);
-        }
+        commit('addPosts', data.articles);
+        commit('setHasMore', data.hasMore);
+        if (error) commit('setError', error);
+        commit('setLoading', false);
     },
 
     setTag({ commit, dispatch }, tag) {

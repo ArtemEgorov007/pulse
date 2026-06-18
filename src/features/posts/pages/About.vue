@@ -42,7 +42,7 @@
           <section class="about-page__section">
             <h2 class="about-page__section-title">Why Vue.js?</h2>
             <p class="about-page__text">
-              Vue 3's Composition API and reactive state management via Vuex make it
+              Vue 3's Single File Components and reactive state management via Vuex make it
               straightforward to build performant, maintainable SPAs. Its progressive
               philosophy keeps bundle sizes lean while supporting complex feature sets.
             </p>
@@ -102,7 +102,7 @@ export default {
   components: { Icon },
   data() {
     return {
-      techStack: ['Vue 3', 'Vue Router', 'Vuex', 'Vite', 'Composition API', 'Axios', 'Dev.to API', 'ES6+']
+      techStack: ['Vue 3', 'Vue Router', 'Vuex', 'Vite', 'Axios', 'Dev.to API', 'ES6+']
     };
   }
 };

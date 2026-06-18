@@ -12,36 +12,32 @@ const newsService = {
      * @returns {Promise<{articles: Array, hasMore: boolean}>}
      */
     async fetchArticles({ page = 1, pageSize = 10, tag = '' } = {}) {
-        try {
-            const params = { per_page: pageSize, page };
-            if (tag) params.tag = tag;
+        const params = { per_page: pageSize, page };
+        if (tag) params.tag = tag;
 
-            const response = await axios.get(`${BASE_URL}/articles`, { params });
+        const response = await axios.get(`${BASE_URL}/articles`, { params });
 
-            const articles = response.data.map(a => ({
-                id: a.id,
-                title: a.title,
-                body: a.description || 'No description available',
-                url: a.url,
-                publishedAt: a.published_at || a.published_timestamp,
-                source: a.organization?.name || a.user?.name || 'DEV Community',
-                author: a.user?.name || null,
-                authorAvatar: a.user?.profile_image_90 || a.user?.profile_image || null,
-                image: a.cover_image || a.social_image || null,
-                tags: Array.isArray(a.tag_list) ? a.tag_list : [],
-                category: (a.tag_list && a.tag_list[0]) || 'Tech',
-                readingTime: a.reading_time_minutes || null,
-                reactions: a.public_reactions_count || 0,
-                comments: a.comments_count || 0
-            }));
+        const articles = response.data.map(a => ({
+            id: a.id,
+            title: a.title,
+            body: a.description || 'No description available',
+            url: a.url,
+            publishedAt: a.published_at || a.published_timestamp,
+            source: a.organization?.name || a.user?.name || 'DEV Community',
+            author: a.user?.name || null,
+            authorAvatar: a.user?.profile_image_90 || a.user?.profile_image || null,
+            image: a.cover_image || a.social_image || null,
+            tags: Array.isArray(a.tag_list) ? a.tag_list : [],
+            category: (a.tag_list && a.tag_list[0]) || 'Tech',
+            readingTime: a.reading_time_minutes || null,
+            reactions: a.public_reactions_count || 0,
+            comments: a.comments_count || 0
+        }));
 
-            return {
-                articles,
-                hasMore: articles.length === pageSize
-            };
-        } catch (error) {
-            return this.getFallbackData(page, pageSize);
-        }
+        return {
+            articles,
+            hasMore: articles.length === pageSize
+        };
     },
 
     /**

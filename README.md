@@ -7,7 +7,7 @@
 ## ✨ Key Features
 
 * ⚡ **Lightning Fast Development** with Vite's hot module replacement
-* 🎨 **Vue 3 Composition API** with Single File Components (SFC)
+* 🎨 **Vue 3 Single File Components** (Options & Composition API)
 * 📱 **Fully Responsive Design** that works on all device sizes
 * 🌙 **Dark/Light Theme Switching** with persistent user preferences
 * ❤️ **Favorites System** to save and manage preferred articles
