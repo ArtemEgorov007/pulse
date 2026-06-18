@@ -57,7 +57,7 @@ No API key required — Pulse uses the public [Dev.to API](https://developers.fo
 npm run dev
 ```
 
-Open [http://localhost:5173](http://localhost:5173) to view the application.
+Open [http://localhost:3000](http://localhost:3000) to view the application.
 
 ### 5. Production Build
 
@@ -124,11 +124,14 @@ Planned enhancements for the application:
 
 Contributions are welcome! To contribute to this project:
 
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/your-feature`)
-3. Commit your changes (`git commit -m "Add new feature"`)
-4. Push to the branch (`git push origin feature/your-feature`)
-5. Open a Pull Request
+1. Sync `main`: `git checkout main && git pull origin main`
+2. Create a feature branch: `git checkout -b feature/your-feature`
+3. Commit your changes: `git commit -m "Add new feature"`
+4. Push the branch: `git push -u origin feature/your-feature`
+5. Open a Pull Request and merge into `main`
+6. After merge, update local `main`: `git checkout main && git pull origin main`
+
+> **Note:** Pushing to a feature branch that was already merged does **not** update `main`. Either open a new PR or push directly to `main` if you work solo.
 
 Please ensure your code follows the existing style and includes appropriate tests.
 
