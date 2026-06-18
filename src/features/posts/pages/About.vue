@@ -120,7 +120,7 @@ export default {
 
 /* Header */
 .about-page__header {
-  padding: var(--spacing-2xl) 0 var(--spacing-lg);
+  padding: var(--spacing-xl) var(--spacing-2xl);
 }
 
 .about-page__kicker {
